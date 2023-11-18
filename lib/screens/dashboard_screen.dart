@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:wisata_app/helper/session_manager.dart';
 import 'package:wisata_app/screens/main_screen.dart';
 import 'package:wisata_app/utils/contants.dart';
 import 'package:wisata_app/widgets/button_nav_bar.dart';
@@ -8,8 +9,13 @@ import 'package:wisata_app/widgets/category_card.dart';
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
+  Future<void> checkLoginStatus(BuildContext context) async {
+    await SessionManager().checkLoginStatus(context);
+  }
+
   @override
   Widget build(BuildContext context) {
+    checkLoginStatus(context);
     var size = MediaQuery.of(context).size;
     return Scaffold(
       bottomNavigationBar: const ButtonNavBar(selectedMenu: MenuState.home),
