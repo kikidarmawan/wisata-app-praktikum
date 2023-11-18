@@ -7,6 +7,19 @@ class SessionManager {
   static SessionManager? _instance;
   static SharedPreferences? _preferences;
 
+  static Future<void> saveData(String token, String name, String email) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('token', token);
+    prefs.setBool('isLogin', true);
+    prefs.setString('name', name);
+    prefs.setString('email', email);
+  }
+
+  static Future<String?> getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
+  }
+
   static Future<SessionManager> getInstance() async {
     if (_instance == null) {
       _instance = SessionManager();
@@ -57,9 +70,10 @@ class SessionManager {
     return _preferences!.getBool('isLogin');
   }
 
-  Future<void> clearUserData() async {
+  static Future<void> clearUserData() async {
     await _preferences!.remove('isLogin');
     await _preferences!.remove('email');
+    await _preferences!.remove('token');
     await _preferences!.clear();
   }
 }

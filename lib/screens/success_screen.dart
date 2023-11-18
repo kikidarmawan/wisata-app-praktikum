@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:wisata_app/screens/dashboard_screen.dart';
 import 'package:wisata_app/size_config.dart';
 import 'package:wisata_app/widgets/default_button.dart';
 
-class LoginSuccessScreen extends StatelessWidget {
-  const LoginSuccessScreen({super.key});
+class SuccessScreen extends StatelessWidget {
+  final String text;
+  final Function? press;
+  const SuccessScreen({
+    Key? key,
+    required this.text,
+    required this.press,
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: const SizedBox(),
-        title: const Text("Login Success"),
-      ),
       body: Column(
         children: [
           SizedBox(height: SizeConfig.screenHeight * 0.04),
@@ -21,7 +22,7 @@ class LoginSuccessScreen extends StatelessWidget {
           ),
           SizedBox(height: SizeConfig.screenHeight * 0.08),
           Text(
-            "Login Success",
+            text,
             style: TextStyle(
               fontSize: getProportionateScreenWidth(30),
               fontWeight: FontWeight.bold,
@@ -33,11 +34,7 @@ class LoginSuccessScreen extends StatelessWidget {
             width: SizeConfig.screenWidth * 0.6,
             child: DefaultButton(
               text: "Back to home",
-              press: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const DashboardScreen();
-                }));
-              },
+              press: press as void Function()?,
             ),
           ),
           const Spacer(),

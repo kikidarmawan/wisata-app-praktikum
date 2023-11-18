@@ -1,17 +1,59 @@
+import 'dart:convert';
 
-import 'package:wisata_app/models/user.dart';
+import 'package:http/http.dart' as http;
+import 'package:wisata_app/base_url.dart';
+import 'package:wisata_app/helper/session_manager.dart';
 
 class AuthService {
-  final List<UserModel> _users = [
-    UserModel(email: 'user1@gmail.com', password: 'password'),
-    UserModel(email: 'user2@gmail.com', password: 'password'),
-  ];
-  Future<UserModel> login(String email, String password) async {
-    final user = _users.firstWhere(
-      (user) => user.email == email && user.password == password,
-      orElse: () => UserModel(email: '', password: ''),
+  Future<Map<String, dynamic>> login(String email, String password) async {
+    final response = await http.post(
+      Uri.parse(BaseURL.urlLogin),
+      body: {'email': email, 'password': password},
     );
 
-    return user;
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      SessionManager.saveData(data['acessToken'], data['name'], data['email']);
+      return {'success': true, 'message': 'Login berhasil'};
+    } else {
+      return {'success': false, 'message': 'Login gagal'};
+    }
+  }
+
+  Future<Map<String, dynamic>> logout() async {
+    final accessToken = await SessionManager.getToken();
+    final response = await http.post(
+      Uri.parse(BaseURL.urlLogout),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+    if (response.statusCode == 200) {
+      await SessionManager.clearUserData();
+      return {'success': true, 'message': 'Logout berhasil'};
+    } else {
+      return {'success': false, 'message': 'Logout gagal'};
+    }
+  }
+
+  Future<Map<String, dynamic>> register(String email, String password,
+      String confirmPassword, String name) async {
+    final response = await http.post(
+      Uri.parse(BaseURL.urlRegister),
+      body: {
+        'email': email,
+        'password': password,
+        'confirmPassword': confirmPassword,
+        'name': name,
+      },
+    );
+    final Map<String, dynamic> data = json.decode(response.body);
+    if (response.statusCode == 201) {
+      return {'success': true, 'message': 'Register berhasil'};
+    } else {
+      return {'success': false, 'message': data['message']};
+    }
   }
 }

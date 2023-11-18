@@ -101,12 +101,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     DefaultButton(
                       text: "Continue",
                       press: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(builder: (context) {
-                        //     return const LoginScreen();
-                        //   }),
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return const LoginScreen();
+                          }),
+                        );
                       },
                     ),
                     const Spacer(),
