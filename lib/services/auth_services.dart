@@ -13,7 +13,7 @@ class AuthService {
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
-      SessionManager.saveData(data['acessToken'], data['name'], data['email']);
+      // SessionManager.saveData(data['acessToken'], data['name'], data['email']);
       return {'success': true, 'message': 'Login berhasil'};
     } else {
       return {'success': false, 'message': 'Login gagal'};
