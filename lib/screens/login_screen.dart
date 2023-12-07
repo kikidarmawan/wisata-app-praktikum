@@ -44,18 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (result['success']) {
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(
-              builder: (context) => SuccessScreen(
-                    text: 'Login Success',
-                    press: () {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const DashboardScreen()),
-                        (route) => false,
-                      );
-                    },
-                  )),
+          MaterialPageRoute(builder: (context) => const DashboardScreen()),
           (route) => false,
         );
       } else {
@@ -65,6 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (e) {
       setState(() {
+        // _error = e.toString();
         _error = 'Login Failed';
       });
     }

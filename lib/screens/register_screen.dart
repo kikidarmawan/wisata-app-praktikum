@@ -260,9 +260,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         if (value!.isEmpty) {
           addError(error: kPassNullError);
           return "";
-        } else if (!passworValidatordRegExp.hasMatch(value)) {
-          addError(error: kInvalidPasswordError);
-          return "";
         }
         return null;
       },

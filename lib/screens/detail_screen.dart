@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:wisata_app/models/tourism_place.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:wisata_app/models/tourism_place_response.dart';
 import 'package:wisata_app/utils/contants.dart';
 
 var informationTextStyle = const TextStyle(fontFamily: 'Oxygen');
@@ -18,7 +19,7 @@ class DetailScreen extends StatelessWidget {
           children: <Widget>[
             Stack(
               children: <Widget>[
-                Image.asset(place.imageAsset),
+                Image.network(place.imageAsset),
                 SafeArea(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -85,7 +86,7 @@ class DetailScreen extends StatelessWidget {
                       const Icon(Icons.monetization_on),
                       const SizedBox(height: 8.0),
                       Text(
-                        place.ticketPrice,
+                        place.ticketPrice.toString(),
                         style: informationTextStyle,
                       ),
                     ],
@@ -95,20 +96,21 @@ class DetailScreen extends StatelessWidget {
             ),
             Container(
               padding: const EdgeInsets.all(16.0),
-              child: Text(
-                place.description,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 16.0,
-                  fontFamily: 'Oxygen',
-                ),
+              child: Html(
+                data: place.description,
               ),
+              //   textAlign: TextAlign.center,
+              //   style: const TextStyle(
+              //     fontSize: 16.0,
+              //     fontFamily: 'Oxygen',
+              //   ),
+              // ),
             ),
             SizedBox(
               height: 150,
               child: ListView(
                 scrollDirection: Axis.horizontal,
-                children: place.imageUrls.map((url) {
+                children: place.images.map((url) {
                   return Padding(
                     padding: const EdgeInsets.all(4.0),
                     child: ClipRRect(

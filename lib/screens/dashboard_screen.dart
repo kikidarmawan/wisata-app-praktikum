@@ -10,12 +10,12 @@ class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
   Future<void> checkLoginStatus(BuildContext context) async {
-    // await SessionManager().checkLoginStatus(context);
+    await SessionManager().checkLoginStatus(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    // checkLoginStatus(context);
+    checkLoginStatus(context);
     var size = MediaQuery.of(context).size;
     return Scaffold(
       bottomNavigationBar: const ButtonNavBar(selectedMenu: MenuState.home),

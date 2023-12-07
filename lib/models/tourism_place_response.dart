@@ -1,3 +1,28 @@
+class TourismPlaceResponse {
+  final String status;
+  final String message;
+  final List<TourismPlace> data;
+
+  TourismPlaceResponse({
+    required this.status,
+    required this.message,
+    required this.data,
+  });
+
+  factory TourismPlaceResponse.fromJson(Map<String, dynamic> json) {
+    // Parsing list of tourism places
+    var dataList = json['data'] as List<dynamic>;
+    List<TourismPlace> tourismPlaces =
+        dataList.map((place) => TourismPlace.fromJson(place)).toList();
+
+    return TourismPlaceResponse(
+      status: json['status'],
+      message: json['message'],
+      data: tourismPlaces,
+    );
+  }
+}
+
 class TourismPlace {
   final String id;
   final String name;
