@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:wisata_app/constants.dart';
 import 'package:wisata_app/helper/keyboard.dart';
 import 'package:wisata_app/helper/session_manager.dart';
+import 'package:wisata_app/screens/beranda_screen.dart';
+// import 'package:wisata_app/screens/beranda_screen.dart';
 import 'package:wisata_app/screens/dashboard_screen.dart';
 import 'package:wisata_app/screens/register_screen.dart';
-import 'package:wisata_app/screens/success_screen.dart';
+// import 'package:wisata_app/screens/success_screen.dart';
 import 'package:wisata_app/services/auth_services.dart';
 import 'package:wisata_app/size_config.dart';
 import 'package:wisata_app/widgets/custom_snackbar.dart';
@@ -44,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (result['success']) {
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const DashboardScreen()),
+          MaterialPageRoute(builder: (context) => BerandaScreen()),
           (route) => false,
         );
       } else {

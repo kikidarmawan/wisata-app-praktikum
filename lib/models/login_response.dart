@@ -52,3 +52,20 @@ class UserData {
     );
   }
 }
+
+class LoginFail {
+  final String status;
+  final String message;
+
+  LoginFail({
+    required this.status,
+    required this.message,
+  });
+
+  factory LoginFail.fromJson(Map<String, dynamic> json) {
+    return LoginFail(
+      status: json['status'],
+      message: json['message'],
+    );
+  }
+}

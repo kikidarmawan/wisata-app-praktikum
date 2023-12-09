@@ -12,4 +12,5 @@ class BaseURL {
 
   //Toruism Place
   static String urlTourismPlace = "${baseURL}tourism-places";
+  static String urlCategory = "${baseURL}categories";
 }

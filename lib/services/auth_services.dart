@@ -12,16 +12,19 @@ class AuthService {
       body: {'email': email, 'password': password},
     );
 
-    final Map<String, dynamic> responseData = json.decode(response.body);
-    final LoginResponse data = LoginResponse.fromJson(responseData);
-    print(response);
+    print(response.statusCode);
     if (response.statusCode == 200) {
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      final LoginResponse data = LoginResponse.fromJson(responseData);
       print(data.data.name);
       SessionManager.saveData(
           data.accessToken, data.data.name, data.data.email);
       return {'success': true, 'message': 'Login berhasil'};
     } else {
-      return {'success': false, 'message': data.message};
+      final Map<String, dynamic> responseFail = json.decode(response.body);
+      final LoginFail dataFail = LoginFail.fromJson(responseFail);
+      // print('status: ${dataFail.message}');
+      return {'success': false, 'message': dataFail.message.toString()};
     }
   }
 

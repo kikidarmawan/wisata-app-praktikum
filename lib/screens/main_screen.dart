@@ -9,7 +9,12 @@ import 'package:wisata_app/utils/contants.dart';
 import 'package:http/http.dart' as http;
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  final String idCategory;
+  final String nameCategory;
+
+  const MainScreen(
+      {Key? key, required this.idCategory, required this.nameCategory})
+      : super(key: key);
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -17,6 +22,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   List<TourismPlace> tourismPlaceList = [];
+  bool loading = true;
 
   @override
   void initState() {
@@ -25,7 +31,8 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Future<void> _fetchPlace() async {
-    final String apiUrl = BaseURL.urlTourismPlace;
+    final String apiUrl =
+        BaseURL.urlTourismPlace + '?category_id=' + widget.idCategory;
 
     final accessToken = await SessionManager.getToken();
 
@@ -58,6 +65,11 @@ class _MainScreenState extends State<MainScreen> {
     } catch (e) {
       // Handle exceptions
       print('Exception during fetching users: $e');
+    } // finally
+    finally {
+      setState(() {
+        loading = false;
+      });
     }
   }
 
@@ -65,50 +77,91 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Vacations'),
+        title: Text(widget.nameCategory),
         backgroundColor: primaryColor,
       ),
-      body: ListView.builder(
-        itemBuilder: (context, index) {
-          final TourismPlace place = tourismPlaceList[index];
-          final String imageUrl = place.imageAsset;
-          return InkWell(
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return DetailScreen(place: place);
-              }));
-            },
-            child: Card(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Expanded(flex: 1, child: Image.network(imageUrl)),
-                  Expanded(
-                    flex: 2,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            place.name,
-                            style: const TextStyle(fontSize: 16.0),
+      body: loading == true
+          ? Center(child: CircularProgressIndicator())
+          : tourismPlaceList.isNotEmpty
+              ? ListView.builder(
+                  itemCount: tourismPlaceList.length,
+                  itemBuilder: (context, index) {
+                    final TourismPlace tourismPlace = tourismPlaceList[index];
+                    return InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetailScreen(
+                              place: tourismPlace,
+                            ),
                           ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Text(place.location),
-                        ],
+                        );
+                      },
+                      child: Card(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Image.network(
+                                tourismPlace.imageAsset,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      tourismPlace.name,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(height: 5),
+                                    Text(
+                                      tourismPlace.location,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    SizedBox(height: 5),
+                                    Text(
+                                      tourismPlace.openDays,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    SizedBox(height: 5),
+                                    Text(
+                                      tourismPlace.openTime,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          );
-        },
-        itemCount: tourismPlaceList.length,
-      ),
+                    );
+                  },
+                )
+              : Center(child: Text('Data Kosong')),
     );
   }
 }

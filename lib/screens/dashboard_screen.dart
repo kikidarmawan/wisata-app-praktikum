@@ -72,7 +72,10 @@ class DashboardScreen extends StatelessWidget {
                           press: () {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
-                              return MainScreen();
+                              return const MainScreen(
+                                idCategory: 'iffj',
+                                nameCategory: 'Vacation',
+                              );
                             }));
                           },
                         ),
