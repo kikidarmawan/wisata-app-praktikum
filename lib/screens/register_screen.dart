@@ -103,7 +103,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       key: scaffoldMessengerKey,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Sign Up"),
+          title: const Text("Daftar"),
         ),
         body: SafeArea(
           child: SizedBox(
@@ -117,7 +117,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   children: [
                     SizedBox(height: SizeConfig.screenHeight * 0.04),
                     const Text(
-                      "Create Account",
+                      "Buat Account",
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 28,
@@ -125,7 +125,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                     const Text(
-                      "Sign up with your email and password",
+                      "Daftar dengan email dan kata sandi Anda",
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: SizeConfig.screenHeight * 0.08),
@@ -144,7 +144,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           FormError(errors: errors),
                           SizedBox(height: getProportionateScreenHeight(30)),
                           DefaultButton(
-                            text: "Register",
+                            text: "Daftar",
                             press: () {
                               if (_formKey.currentState!.validate()) {
                                 _formKey.currentState!.save();
@@ -179,7 +179,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Already have an account? ",
+                          "Saya sudah punya account? ",
                           style: TextStyle(
                             fontSize: getProportionateScreenWidth(16),
                           ),
@@ -194,7 +194,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             );
                           },
                           child: Text(
-                            "Sign In",
+                            "Masuk",
                             style: TextStyle(
                               fontSize: getProportionateScreenWidth(16),
                               color: primaryColor,

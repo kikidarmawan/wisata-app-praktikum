@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wisata_app/screens/beranda_screen.dart';
 import 'package:wisata_app/screens/dashboard_screen.dart';
 import 'package:wisata_app/screens/login_screen.dart';
 
@@ -20,6 +21,8 @@ class SessionManager {
     return prefs.getString('token');
   }
 
+  
+
   static Future<SessionManager> getInstance() async {
     if (_instance == null) {
       _instance = SessionManager();
@@ -35,10 +38,11 @@ class SessionManager {
   Future<void> isLogin(BuildContext context) async {
     await getInstance();
     bool isLogin = _preferences!.getBool('isLogin') ?? false;
+    print(isLogin);
     if (isLogin) {
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => const DashboardScreen()),
+        MaterialPageRoute(builder: (context) => const BerandaScreen()),
         (route) => false,
       );
     }

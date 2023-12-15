@@ -97,7 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
       key: scaffoldMessengerKey,
       child: Scaffold(
           appBar: AppBar(
-            title: const Text("Sign In"),
+            title: const Text("Masuk"),
           ),
           body: SafeArea(
             child: SizedBox(
@@ -110,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       SizedBox(height: SizeConfig.screenHeight * 0.04),
                       const Text(
-                        "Welcome Back",
+                        "Selamat datang",
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 28,
@@ -118,7 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       const Text(
-                        "Sign in with your email and password  \nor continue with social media",
+                        "Silahkan masukan alamat email dan password anda",
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: SizeConfig.screenHeight * 0.08),
@@ -141,12 +141,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                     });
                                   },
                                 ),
-                                const Text("Remember me"),
+                                const Text("Ingatkan Saya"),
                                 const Spacer(),
                                 GestureDetector(
                                   onTap: () {},
                                   child: const Text(
-                                    "Forgot Password",
+                                    "Lupa Katasandi",
                                     style: TextStyle(
                                         decoration: TextDecoration.underline),
                                   ),
@@ -156,7 +156,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             FormError(errors: errors),
                             SizedBox(height: getProportionateScreenHeight(30)),
                             DefaultButton(
-                              text: "Login",
+                              text: "Masuk",
                               press: () {
                                 if (_formKey.currentState!.validate()) {
                                   _formKey.currentState!.save();
@@ -191,7 +191,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Don’t have an account? ",
+                            "Belum punya akun? ",
                             style: TextStyle(
                                 fontSize: getProportionateScreenWidth(16)),
                           ),
@@ -205,7 +205,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               );
                             },
                             child: Text(
-                              "Sign Up",
+                              "Daftar",
                               style: TextStyle(
                                   fontSize: getProportionateScreenWidth(16),
                                   color: primaryColor),
@@ -246,7 +246,7 @@ class _LoginScreenState extends State<LoginScreen> {
       },
       decoration: const InputDecoration(
         labelText: "Password",
-        hintText: "Enter your password",
+        hintText: "*******",
         floatingLabelBehavior: FloatingLabelBehavior.always,
         suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Lock.svg"),
       ),
@@ -277,7 +277,7 @@ class _LoginScreenState extends State<LoginScreen> {
       },
       decoration: const InputDecoration(
         labelText: "Email",
-        hintText: "Enter your email",
+        hintText: "john@mail.com",
         floatingLabelBehavior: FloatingLabelBehavior.always,
         suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Mail.svg"),
       ),

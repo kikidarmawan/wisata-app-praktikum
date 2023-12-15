@@ -7,10 +7,11 @@ class BaseURL {
   //Auth
   static String urlLogin = "${baseURL}login";
   static String urlRegister = "${baseURL}register";
-  static String urlLogout = "${baseURL}auth/logout";
+  static String urlLogout = "${baseURL}logout";
   static String urlRefreshToken = "${baseURL}auth/refresh-token";
 
   //Toruism Place
   static String urlTourismPlace = "${baseURL}tourism-places";
   static String urlCategory = "${baseURL}categories";
+  static String urlNearBy = "${baseURL}nearby/tourism-places";
 }

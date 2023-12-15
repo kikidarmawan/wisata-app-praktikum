@@ -7,14 +7,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wisata_app/base_url.dart';
 import 'package:wisata_app/helper/session_manager.dart';
 import 'package:wisata_app/models/category_response.dart';
+import 'package:wisata_app/models/tourism_place_response.dart';
 import 'package:wisata_app/screens/dashboard_screen.dart';
+import 'package:wisata_app/screens/detail_screen.dart';
 import 'package:wisata_app/screens/login_screen.dart';
 import 'package:wisata_app/screens/main_screen.dart';
+import 'package:wisata_app/screens/profile_screen.dart';
 import 'package:wisata_app/utils/contants.dart';
 import 'package:wisata_app/utils/page_transtion.dart';
 import 'package:wisata_app/widgets/shimmer.dart';
 import 'package:wisata_app/widgets/shimmer_dark.dart';
 
+import 'package:wisata_app/widgets/bottom_navigation.dart';
 import 'package:http/http.dart' as http;
 // import 'package:wisata_app/widgets/style.dart';
 // import 'package:http/http.dart' as http;
@@ -33,8 +37,11 @@ class _BerandaScreenState extends State<BerandaScreen> {
   int countNotif = 0;
   int? intDebit, intCredit;
   bool loading = false;
+  bool loadingCategory = true;
+  int _currentIndex = 0; // Inisialisasi _currentIndex di sini.
 
   List<Category> categoryList = [];
+  List<TourismPlace> tourismNearBy = [];
   // List<PromoModel> _promo = [];
   // List<ArticleModel> _article = [];
 
@@ -60,6 +67,47 @@ class _BerandaScreenState extends State<BerandaScreen> {
         // Accessing each tourism place
         setState(() {
           categoryList = categoryResponse.data;
+        });
+
+        print(responseData);
+      } else {
+        // print message
+        print('Request failed with status: ${response.body}.');
+        // Handle errors
+        print(
+            'Failed to fetch tourism places. Status Code: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle exceptions
+      print('Exception during fetching users: $e');
+    }
+
+    setState(() {
+      loadingCategory = false;
+    });
+  }
+
+  Future<void> _fetchNearBy() async {
+    final String apiUrl = BaseURL.urlNearBy;
+    final accessToken = await SessionManager.getToken();
+
+    try {
+      final response = await http.get(Uri.parse(apiUrl), headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      });
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        final TourismPlaceResponse tourismResponse =
+            TourismPlaceResponse.fromJson(responseData);
+
+        // Accessing properties of the model
+        print('Status: ${tourismResponse.message}');
+
+        // Accessing each tourism place
+        setState(() {
+          tourismNearBy = tourismResponse.data;
         });
 
         print(responseData);
@@ -208,6 +256,7 @@ class _BerandaScreenState extends State<BerandaScreen> {
   void initState() {
     homeStart();
     _fetchCategory();
+    _fetchNearBy();
     // getPromo();
     // getArticle();
     super.initState();
@@ -249,7 +298,7 @@ class _BerandaScreenState extends State<BerandaScreen> {
               children: <Widget>[
                 Row(
                   children: <Widget>[
-                    Image.asset('assets/images/jokka-home-logo.png'),
+                    Image.asset('assets/images/logo-jabar.png'),
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0),
                       child: Column(
@@ -713,7 +762,7 @@ class _BerandaScreenState extends State<BerandaScreen> {
                   else
                     Container(
                       margin: EdgeInsets.only(top: 5),
-                      height: 320,
+                      height: 250,
                       width: width,
                       color: Colors.white,
                       padding: EdgeInsets.all(5),
@@ -768,103 +817,103 @@ class _BerandaScreenState extends State<BerandaScreen> {
                             : [],
                       ),
                     ),
-                  loading == true
-                      ? Container(
-                          height: 160,
-                          width: width,
-                          color: Colors.white,
-                          margin: EdgeInsets.only(top: 10),
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            children: [
-                              ShimmerDark(
-                                height: 120,
-                                width: 120,
-                              ),
-                            ],
-                          ),
-                        )
-                      : Container(
-                          height: 250,
-                          width: width,
-                          color: Colors.white,
-                          margin: EdgeInsets.only(top: 10),
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 10.0),
-                                  child: Text(
-                                    "Tontonan Terbaru",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18),
-                                  ),
-                                ),
-                                Wrap(
-                                  spacing: 20,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              width: 250,
-                                              height: 150,
-                                              decoration: BoxDecoration(
-                                                color: Colors.black,
-                                                image: DecorationImage(
-                                                  image: AssetImage(
-                                                      'assets/tonton1.png'),
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              width: 250,
-                                              height: 150,
-                                              decoration: BoxDecoration(
-                                                color: Colors.black,
-                                                image: DecorationImage(
-                                                  image: AssetImage(
-                                                      'assets/tonton2.png'),
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                  // loading == true
+                  //     ? Container(
+                  //         height: 160,
+                  //         width: width,
+                  //         color: Colors.white,
+                  //         margin: EdgeInsets.only(top: 10),
+                  //         padding: EdgeInsets.symmetric(
+                  //             horizontal: 20, vertical: 10),
+                  //         child: ListView(
+                  //           scrollDirection: Axis.horizontal,
+                  //           children: [
+                  //             ShimmerDark(
+                  //               height: 120,
+                  //               width: 120,
+                  //             ),
+                  //           ],
+                  //         ),
+                  //       )
+                  //     : Container(
+                  //         height: 250,
+                  //         width: width,
+                  //         color: Colors.white,
+                  //         margin: EdgeInsets.only(top: 10),
+                  //         padding: EdgeInsets.symmetric(
+                  //             horizontal: 20, vertical: 10),
+                  //         child: SingleChildScrollView(
+                  //           scrollDirection: Axis.horizontal,
+                  //           child: Column(
+                  //             crossAxisAlignment: CrossAxisAlignment.start,
+                  //             children: [
+                  //               Padding(
+                  //                 padding: const EdgeInsets.symmetric(
+                  //                     vertical: 10.0),
+                  //                 child: Text(
+                  //                   "Tontonan Terbaru",
+                  //                   style: TextStyle(
+                  //                       fontWeight: FontWeight.bold,
+                  //                       fontSize: 18),
+                  //                 ),
+                  //               ),
+                  //               Wrap(
+                  //                 spacing: 20,
+                  //                 children: [
+                  //                   Row(
+                  //                     mainAxisAlignment:
+                  //                         MainAxisAlignment.spaceBetween,
+                  //                     children: [
+                  //                       Column(
+                  //                         crossAxisAlignment:
+                  //                             CrossAxisAlignment.start,
+                  //                         children: [
+                  //                           Container(
+                  //                             width: 250,
+                  //                             height: 150,
+                  //                             decoration: BoxDecoration(
+                  //                               color: Colors.black,
+                  //                               image: DecorationImage(
+                  //                                 image: AssetImage(
+                  //                                     'assets/tonton1.png'),
+                  //                                 fit: BoxFit.cover,
+                  //                               ),
+                  //                             ),
+                  //                           ),
+                  //                         ],
+                  //                       ),
+                  //                     ],
+                  //                   ),
+                  //                   Row(
+                  //                     mainAxisAlignment:
+                  //                         MainAxisAlignment.spaceBetween,
+                  //                     children: [
+                  //                       Column(
+                  //                         crossAxisAlignment:
+                  //                             CrossAxisAlignment.start,
+                  //                         children: [
+                  //                           Container(
+                  //                             width: 250,
+                  //                             height: 150,
+                  //                             decoration: BoxDecoration(
+                  //                               color: Colors.black,
+                  //                               image: DecorationImage(
+                  //                                 image: AssetImage(
+                  //                                     'assets/tonton2.png'),
+                  //                                 fit: BoxFit.cover,
+                  //                               ),
+                  //                             ),
+                  //                           ),
+                  //                         ],
+                  //                       ),
+                  //                     ],
+                  //                   ),
+                  //                 ],
+                  //               ),
+                  //             ],
+                  //           ),
+                  //         ),
+                  //       ),
                   Container(
                     width: width,
                     height: 12,
@@ -886,180 +935,250 @@ class _BerandaScreenState extends State<BerandaScreen> {
                               padding:
                                   const EdgeInsets.symmetric(vertical: 10.0),
                               child: Text(
-                                "Merchant Terdekat",
+                                "Wisata Terdekat",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 18),
                               ),
                             ),
                             Wrap(
                               spacing: 20,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          width: 250,
-                                          height: 150,
-                                          decoration: BoxDecoration(
-                                            color: Colors.black,
-                                            image: DecorationImage(
-                                              image: AssetImage(
-                                                  'assets/images/merchant1.png'),
-                                              fit: BoxFit.cover,
+                              children: tourismNearBy.isNotEmpty
+                                  ? tourismNearBy
+                                      .map((e) => InkWell(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      DetailScreen(
+                                                    place: e,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                      width: 250,
+                                                      height: 150,
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.black,
+                                                        image: DecorationImage(
+                                                          image: NetworkImage(
+                                                              e.imageAsset),
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(e.name,
+                                                            style: TextStyle(
+                                                                fontSize: 18,
+                                                                color: Colors
+                                                                    .black,
+                                                                fontFamily:
+                                                                    'Archivo',
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600)),
+                                                        SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        Text(
+                                                          e.location,
+                                                          style: TextStyle(
+                                                            color: Colors.grey,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  ],
+                                                ),
+                                              ],
                                             ),
+                                          ))
+                                      .toList()
+                                  : [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                width: 250,
+                                                height: 150,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.black,
+                                                  image: DecorationImage(
+                                                    image: AssetImage(
+                                                        'assets/images/merchant1.png'),
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text("Sweat Leaf Coffee",
+                                                      style: TextStyle(
+                                                          fontSize: 18,
+                                                          color: Colors.black,
+                                                          fontFamily: 'Archivo',
+                                                          fontWeight:
+                                                              FontWeight.w600)),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Text(
+                                                    "Coffee And Rosto",
+                                                    style: TextStyle(
+                                                      color: Colors.grey,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    "4.6 km",
+                                                    style: TextStyle(
+                                                      color: Colors.grey,
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                            ],
                                           ),
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text("Sweat Leaf Coffee",
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    color: Colors.black,
-                                                    fontFamily: 'Archivo',
-                                                    fontWeight:
-                                                        FontWeight.w600)),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            Text(
-                                              "Coffee And Rosto",
-                                              style: TextStyle(
-                                                color: Colors.grey,
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                width: 250,
+                                                height: 150,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.black,
+                                                  image: DecorationImage(
+                                                    image: AssetImage(
+                                                        'assets/images/merchant2.png'),
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
                                               ),
-                                            ),
-                                            Text(
-                                              "4.6 km",
-                                              style: TextStyle(
-                                                color: Colors.grey,
+                                              SizedBox(
+                                                height: 10,
                                               ),
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          width: 250,
-                                          height: 150,
-                                          decoration: BoxDecoration(
-                                            color: Colors.black,
-                                            image: DecorationImage(
-                                              image: AssetImage(
-                                                  'assets/images/merchant2.png'),
-                                              fit: BoxFit.cover,
-                                            ),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text("De Remise",
+                                                      style: TextStyle(
+                                                          fontSize: 18,
+                                                          color: Colors.black,
+                                                          fontFamily: 'Archivo',
+                                                          fontWeight:
+                                                              FontWeight.w600)),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Text(
+                                                    "Modern Apparel",
+                                                    style: TextStyle(
+                                                      color: Colors.grey,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    "4.6 km",
+                                                    style: TextStyle(
+                                                      color: Colors.grey,
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                            ],
                                           ),
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text("De Remise",
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    color: Colors.black,
-                                                    fontFamily: 'Archivo',
-                                                    fontWeight:
-                                                        FontWeight.w600)),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            Text(
-                                              "Modern Apparel",
-                                              style: TextStyle(
-                                                color: Colors.grey,
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                width: 250,
+                                                height: 150,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.black,
+                                                  image: DecorationImage(
+                                                    image: AssetImage(
+                                                        'assets/images/merchant1.png'),
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
                                               ),
-                                            ),
-                                            Text(
-                                              "4.6 km",
-                                              style: TextStyle(
-                                                color: Colors.grey,
+                                              SizedBox(
+                                                height: 10,
                                               ),
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          width: 250,
-                                          height: 150,
-                                          decoration: BoxDecoration(
-                                            color: Colors.black,
-                                            image: DecorationImage(
-                                              image: AssetImage(
-                                                  'assets/images/merchant1.png'),
-                                              fit: BoxFit.cover,
-                                            ),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text("Sweat Leaf Coffee",
+                                                      style: TextStyle(
+                                                          fontSize: 18,
+                                                          color: Colors.black,
+                                                          fontFamily: 'Archivo',
+                                                          fontWeight:
+                                                              FontWeight.w600)),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Text(
+                                                    "Coffee And Rosto",
+                                                    style: TextStyle(
+                                                      color: Colors.grey,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    "4.6 km",
+                                                    style: TextStyle(
+                                                      color: Colors.grey,
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                            ],
                                           ),
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text("Sweat Leaf Coffee",
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    color: Colors.black,
-                                                    fontFamily: 'Archivo',
-                                                    fontWeight:
-                                                        FontWeight.w600)),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            Text(
-                                              "Coffee And Rosto",
-                                              style: TextStyle(
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                            Text(
-                                              "4.6 km",
-                                              style: TextStyle(
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                        ],
+                                      ),
+                                    ],
                             ),
                           ],
                         ),
@@ -1071,142 +1190,183 @@ class _BerandaScreenState extends State<BerandaScreen> {
                     height: 12,
                     color: Colors.grey[100],
                   ),
-                  Container(
-                    width: width,
-                    height: 320,
-                    color: Colors.white,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 20.0, horizontal: 30.0),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 10.0),
-                              child: Text(
-                                "Artikel Terkait",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 18),
-                              ),
-                            ),
-                            Wrap(
-                              spacing: 20,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          width: 250,
-                                          height: 150,
-                                          decoration: BoxDecoration(
-                                            color: Colors.black,
-                                            image: DecorationImage(
-                                              image: AssetImage(
-                                                  'assets/images/artikel1.png'),
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text("Example Article Number 1",
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    color: Colors.black,
-                                                    fontFamily: 'Archivo',
-                                                    fontWeight:
-                                                        FontWeight.w600)),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            Text(
-                                              "Lorem ipsum dolor sit amet",
-                                              style: TextStyle(
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          width: 250,
-                                          height: 150,
-                                          decoration: BoxDecoration(
-                                            color: Colors.black,
-                                            image: DecorationImage(
-                                              image: AssetImage(
-                                                  'assets/images/artikel2.png'),
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text("Example Article Number 2",
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    color: Colors.black,
-                                                    fontFamily: 'Archivo',
-                                                    fontWeight:
-                                                        FontWeight.w600)),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            Text(
-                                              "Lorem Ipsum dolor sit amet",
-                                              style: TextStyle(
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                  // Container(
+                  //   width: width,
+                  //   height: 320,
+                  //   color: Colors.white,
+                  //   child: Padding(
+                  //     padding: const EdgeInsets.symmetric(
+                  //         vertical: 20.0, horizontal: 30.0),
+                  //     child: SingleChildScrollView(
+                  //       scrollDirection: Axis.horizontal,
+                  //       child: Column(
+                  //         crossAxisAlignment: CrossAxisAlignment.start,
+                  //         children: [
+                  //           Padding(
+                  //             padding:
+                  //                 const EdgeInsets.symmetric(vertical: 10.0),
+                  //             child: Text(
+                  //               "Artikel Terkait",
+                  //               style: TextStyle(
+                  //                   fontWeight: FontWeight.bold, fontSize: 18),
+                  //             ),
+                  //           ),
+                  //           Wrap(
+                  //             spacing: 20,
+                  //             children: [
+                  //               Row(
+                  //                 mainAxisAlignment:
+                  //                     MainAxisAlignment.spaceBetween,
+                  //                 children: [
+                  //                   Column(
+                  //                     crossAxisAlignment:
+                  //                         CrossAxisAlignment.start,
+                  //                     children: [
+                  //                       Container(
+                  //                         width: 250,
+                  //                         height: 150,
+                  //                         decoration: BoxDecoration(
+                  //                           color: Colors.black,
+                  //                           image: DecorationImage(
+                  //                             image: AssetImage(
+                  //                                 'assets/images/artikel1.png'),
+                  //                             fit: BoxFit.cover,
+                  //                           ),
+                  //                         ),
+                  //                       ),
+                  //                       SizedBox(
+                  //                         height: 10,
+                  //                       ),
+                  //                       Column(
+                  //                         crossAxisAlignment:
+                  //                             CrossAxisAlignment.start,
+                  //                         children: [
+                  //                           Text("Example Article Number 1",
+                  //                               style: TextStyle(
+                  //                                   fontSize: 18,
+                  //                                   color: Colors.black,
+                  //                                   fontFamily: 'Archivo',
+                  //                                   fontWeight:
+                  //                                       FontWeight.w600)),
+                  //                           SizedBox(
+                  //                             height: 10,
+                  //                           ),
+                  //                           Text(
+                  //                             "Lorem ipsum dolor sit amet",
+                  //                             style: TextStyle(
+                  //                               color: Colors.grey,
+                  //                             ),
+                  //                           ),
+                  //                         ],
+                  //                       )
+                  //                     ],
+                  //                   ),
+                  //                 ],
+                  //               ),
+                  //               Row(
+                  //                 mainAxisAlignment:
+                  //                     MainAxisAlignment.spaceBetween,
+                  //                 children: [
+                  //                   Column(
+                  //                     crossAxisAlignment:
+                  //                         CrossAxisAlignment.start,
+                  //                     children: [
+                  //                       Container(
+                  //                         width: 250,
+                  //                         height: 150,
+                  //                         decoration: BoxDecoration(
+                  //                           color: Colors.black,
+                  //                           image: DecorationImage(
+                  //                             image: AssetImage(
+                  //                                 'assets/images/artikel2.png'),
+                  //                             fit: BoxFit.cover,
+                  //                           ),
+                  //                         ),
+                  //                       ),
+                  //                       SizedBox(
+                  //                         height: 10,
+                  //                       ),
+                  //                       Column(
+                  //                         crossAxisAlignment:
+                  //                             CrossAxisAlignment.start,
+                  //                         children: [
+                  //                           Text("Example Article Number 2",
+                  //                               style: TextStyle(
+                  //                                   fontSize: 18,
+                  //                                   color: Colors.black,
+                  //                                   fontFamily: 'Archivo',
+                  //                                   fontWeight:
+                  //                                       FontWeight.w600)),
+                  //                           SizedBox(
+                  //                             height: 10,
+                  //                           ),
+                  //                           Text(
+                  //                             "Lorem Ipsum dolor sit amet",
+                  //                             style: TextStyle(
+                  //                               color: Colors.grey,
+                  //                             ),
+                  //                           ),
+                  //                         ],
+                  //                       )
+                  //                     ],
+                  //                   ),
+                  //                 ],
+                  //               ),
+                  //             ],
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
           ),
         ],
       ),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        currentIndex: _currentIndex,
+        onChange: (index) {
+          setState(() {
+            _currentIndex = index;
+            // Tambahkan penanganan navigasi ke layar tertentu berdasarkan index.
+            if (_currentIndex == 3) {
+              // Navigasi ke layar profil atau tindakan lain yang diinginkan.
+              navigateToProfile();
+            }
+          });
+        },
+        children: [
+          CustomBottomNavigationItem(
+            iconactive: 'assets/images/home-icon-active.png',
+            icon: 'assets/images/home-icon.png',
+            label: 'Beranda',
+          ),
+          CustomBottomNavigationItem(
+            iconactive: 'assets/images/history-icon-active.png',
+            icon: 'assets/images/history-icon.png',
+            label: 'Riwayat',
+          ),
+          CustomBottomNavigationItem(
+            iconactive: 'assets/images/inbox-icon.png',
+            icon: 'assets/images/inbox-icon.png',
+            label: 'Inbox',
+          ),
+          CustomBottomNavigationItem(
+            iconactive: 'assets/images/akun-icon-active.png',
+            icon: 'assets/images/akun-icon.png',
+            label: 'Akun',
+          ),
+        ],
+      ),
     );
+  }
+
+  void navigateToProfile() {
+    // Implementasi navigasi ke layar profil atau tindakan lainnya.
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => ProfileScreen()));
   }
   // }
 }
